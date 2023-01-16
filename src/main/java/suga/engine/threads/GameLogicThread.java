@@ -91,7 +91,7 @@ public class GameLogicThread extends Thread implements SugaThread {
                     //noinspection BusyWait
                     sleep((1000 / LOGIC_RATE) - logicTime);
                 } catch (Exception e) {
-                    GameEngine.getLogger().log(e);
+                    GameEngine.getInstance().getLogger().log(e);
                 }
             }
             lastFinished = System.currentTimeMillis();
@@ -100,7 +100,7 @@ public class GameLogicThread extends Thread implements SugaThread {
                 try {
                     game.loop();
                 } catch (Exception e) {
-                    GameEngine.getLogger().log(e);
+                    GameEngine.getInstance().getLogger().log(e);
                 }
             }
         }

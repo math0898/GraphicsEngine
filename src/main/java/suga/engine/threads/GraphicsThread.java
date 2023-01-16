@@ -102,7 +102,7 @@ public class GraphicsThread extends Thread implements SugaThread {
                     //noinspection BusyWait
                     sleep((int) ((1000 / FRAME_RATE) - drawTime));
                 } catch (Exception e) {
-                    GameEngine.getLogger().log(e);
+                    GameEngine.getInstance().getLogger().log(e);
                 }
             }
             lastFinished = System.currentTimeMillis();
@@ -110,7 +110,7 @@ public class GraphicsThread extends Thread implements SugaThread {
                 try {
                     panel.repaint();
                 } catch (Exception e) {
-                    GameEngine.getLogger().log(e);
+                    GameEngine.getInstance().getLogger().log(e);
                 }
             }
             frames++;

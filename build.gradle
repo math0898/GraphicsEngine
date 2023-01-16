@@ -5,7 +5,8 @@ plugins {
 }
 
 group 'io.github.math0898'
-version '2.5.1'
+version '3.0.0-zeta5'
+var isSnapshot = true
 
 repositories {
     mavenCentral()
@@ -48,7 +49,10 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId(group)
-            artifactId('suga-engine')
+            if (isSnapshot)
+                artifactId('suga-engine-snapshot')
+            else
+                artifactId('suga-engine')
             version(version) // Pulls version from Gradle root
             from components.java
 

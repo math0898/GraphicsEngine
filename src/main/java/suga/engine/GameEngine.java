@@ -22,24 +22,29 @@ import java.awt.event.WindowEvent;
 public class GameEngine {
 
     /**
+     * Reference to the single GameEngine that exists at runtime.
+     */
+    private static GameEngine globalEngine;
+
+    /**
      * The currently opened frame.
      */
-    protected static JFrame frame;
+    private JFrame frame;
 
     /**
      * The current graphics thread if one is running.
      */
-    protected static SugaThread graphics;
+    private SugaThread graphics;
 
     /**
      * The current game logic thread if one is running.
      */
-    protected static SugaThread logic;
+    private SugaThread logic;
 
     /**
      * The logger currently being used by the GameEngine.
      */
-    protected static Logger logger = new GeneralLogger();
+    private Logger logger = new GeneralLogger();
 
     /**
      * An enum of pre-defined resolutions to open a game window at.
@@ -51,7 +56,56 @@ public class GameEngine {
         /**
          * Creates the window at the largest possible resolution in full screen mode.
          */
-        FULL_SCREEN
+        FULL_SCREEN,
+
+        /**
+         * Creates the window at half the maximum size in each direction. Leaves top bar.
+         */
+        WINDOWED;
+
+        /**
+         * Modifies the given frame's size depending on the given Window parameter.
+         *
+         * @param frame  The frame that should be modified to match the window state.
+         */
+        public void modifyFrame (JFrame frame) {
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            switch (this) {
+                case FULL_SCREEN -> {
+                    frame.setSize(dim);
+                    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    frame.setUndecorated(true);
+                }
+                case WINDOWED -> {
+                    frame.setSize(dim.width / 2, dim.height / 2);
+                    frame.setUndecorated(false);
+                }
+            }
+        }
+    }
+
+    /**
+     * The GameEngine constructor.
+     */
+    protected GameEngine () {
+
+    }
+
+    /**
+     * Creates a new GameEngine object and assigns it to the static reference.
+     */
+    private static void createGameEngine () {
+        globalEngine = new GameEngine();
+    }
+
+    /**
+     * Accessor method to the global instance of the GameEngine.
+     *
+     * @return A reference to the GameEngine.
+     */
+    public static GameEngine getInstance () {
+        if (globalEngine == null) createGameEngine();
+        return globalEngine;
     }
 
     /**
@@ -59,7 +113,7 @@ public class GameEngine {
      *
      * @return The logger currently in use by the GameEngine.
      */
-    public static Logger getLogger () {
+    public Logger getLogger () {
         return logger;
     }
 
@@ -68,16 +122,16 @@ public class GameEngine {
      *
      * @param logger The new logger for the GameEngine to use.
      */
-    public static void setLogger (Logger logger) {
-        GameEngine.logger.log("GameEngine: Switching to a new logger.");
-        GameEngine.logger = logger;
-        GameEngine.logger.log("GameEngine: Switched logger.");
+    public void setLogger (Logger logger) {
+        this.logger.log("GameEngine: Switching to a new logger.");
+        this.logger = logger;
+        this.logger.log("GameEngine: Switched logger.");
     }
 
     /**
      * Closes both the logic and graphics thread.
      */
-    public static void stop () {
+    public void stop () {
         logger.log("GameEngine: Stopping the game.");
         graphics.setStopped(true);
         logic.setStopped(true);
@@ -89,10 +143,8 @@ public class GameEngine {
     /**
      * Creates a new game window with all the possible configuration options being specified.
      *
-     * @param width         The width to create the game window at.
-     * @param height        The height to create the game window at.
+     * @param window        An enum parameter which is used to create the desired window size.
      * @param name          The name for the resulting window.
-     * @param border        Whether to hide the border or not when creating the window.
      * @param panel         The graphics panel to be used for this game.
      * @param background    The background color for the panel.
      * @param logicRate     How many times per second the game logic should be called.
@@ -101,17 +153,17 @@ public class GameEngine {
      * @param mouseListener The mouse listener to use for this window. Will override active frame.
      * @param game          The game to attach to this window. Will override currently active panel or input listeners.
      */
-    public static void launchGameWindow (int width, int height, String name, boolean border, GraphicsPanel panel,
+    public void launchGameWindow (Window window, String name, GraphicsPanel panel,
                                          Color background, int logicRate, int frameRate, GameKeyListener keyListener,
                                          GameMouseListener mouseListener, Game game) {
         logger.log("GameEngine: Starting the game window.");
         panel.setBackground(background);
         frame = new JFrame(name);
-        frame.setSize(width, height);
+        window.modifyFrame(frame);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setLocation(dim.width / 4, dim.height / 4);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(panel, BorderLayout.CENTER);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setUndecorated(!border);
         frame.setVisible(true);
         graphics = new GraphicsThread(panel, frameRate);
         graphics.start();

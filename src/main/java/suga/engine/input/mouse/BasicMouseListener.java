@@ -1,13 +1,12 @@
 package suga.engine.input.mouse;
 
+import suga.engine.GameEngine;
 import suga.engine.logger.Level;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.Stack;
-
-import static suga.engine.GameEngine.getLogger;
 
 /**
  * The BasicMouseListener is a simple implementation of the GameMouseListener which only pays attention to mouse presses
@@ -51,10 +50,10 @@ public class BasicMouseListener implements GameMouseListener {
     @Override
     public Point getMousePos () {
         if (frame == null) {
-            getLogger().log("BasicMouseListener: Attempted to read mouse position when JFrame is not initialized.", Level.EXCEPTION);
+            GameEngine.getInstance().getLogger().log("BasicMouseListener: Attempted to read mouse position when JFrame is not initialized.", Level.EXCEPTION);
             return null;
         }
-        getLogger().log("BasicMouseListener: Read mouse position: " + frame.getMousePosition(), Level.VERBOSE);
+        GameEngine.getInstance().getLogger().log("BasicMouseListener: Read mouse position: " + frame.getMousePosition(), Level.VERBOSE);
         return frame.getMousePosition();
     }
 
@@ -76,7 +75,7 @@ public class BasicMouseListener implements GameMouseListener {
      */
     @Override
     public void mousePressed (MouseEvent e) {
-        getLogger().log("BasicMouseListener: Received mouse pressed event: " + e, Level.VERBOSE);
+        GameEngine.getInstance().getLogger().log("BasicMouseListener: Received mouse pressed event: " + e, Level.VERBOSE);
         events.add(e);
     }
 
@@ -87,7 +86,7 @@ public class BasicMouseListener implements GameMouseListener {
      */
     @Override
     public void mouseReleased (MouseEvent e) {
-        getLogger().log("BasicMouseListener: Received mouse release event: " + e, Level.VERBOSE);
+        GameEngine.getInstance().getLogger().log("BasicMouseListener: Received mouse release event: " + e, Level.VERBOSE);
         events.add(e);
     }
 
@@ -128,7 +127,7 @@ public class BasicMouseListener implements GameMouseListener {
      */
     @Override
     public void setFrame (JFrame frame) {
-        getLogger().log("BasicMouseListener: Assigning this listener to a new JFrame.", Level.DEBUG);
+        GameEngine.getInstance().getLogger().log("BasicMouseListener: Assigning this listener to a new JFrame.", Level.DEBUG);
         frame.addMouseListener(this);
         this.frame = frame;
     }

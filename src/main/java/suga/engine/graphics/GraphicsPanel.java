@@ -55,7 +55,7 @@ public abstract class GraphicsPanel extends JPanel implements GraphicsPanelInter
                         l.applyChanges(width, height, this);
             }
         } catch (ConcurrentModificationException e) {
-            GameEngine.getLogger().log(e, Level.WARNING); // This sometimes occurs when loading while drawing a frame.
+            GameEngine.getInstance().getLogger().log(e, Level.WARNING); // This sometimes occurs when loading while drawing a frame.
         }
     }
 

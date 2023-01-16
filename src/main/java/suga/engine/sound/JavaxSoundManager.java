@@ -1,5 +1,6 @@
 package suga.engine.sound;
 
+import suga.engine.GameEngine;
 import suga.engine.logger.Level;
 
 import javax.sound.sampled.*;
@@ -7,8 +8,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import static suga.engine.GameEngine.getLogger;
 
 /**
  * The JavaxSoundManager is a SoundManager that outputs sound using the classes provided by javax and javax.sampled.
@@ -59,17 +58,17 @@ public class JavaxSoundManager implements SoundManager {
                         stream = new BufferedInputStream(stream);
                         toReturn.open(AudioSystem.getAudioInputStream(stream));
                     } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
-                        getLogger().log("JavaxSoundManager: An exception occurred attempting to convert the input stream to a clip.", e, Level.EXCEPTION);
+                        GameEngine.getInstance().getLogger().log("JavaxSoundManager: An exception occurred attempting to convert the input stream to a clip.", e, Level.EXCEPTION);
                         return null;
                     }
                 } catch (IOException e) {
-                    getLogger().log("JavaxSoundManager: Clip was not found as a resource, and an exception occurred searching the disk.", e, Level.EXCEPTION);
+                    GameEngine.getInstance().getLogger().log("JavaxSoundManager: Clip was not found as a resource, and an exception occurred searching the disk.", e, Level.EXCEPTION);
                     return null;
                 }
             }
             return toReturn;
         } catch (LineUnavailableException e) {
-            getLogger().log("JavaxSoundManager: Out line is not available.", e, Level.EXCEPTION);
+            GameEngine.getInstance().getLogger().log("JavaxSoundManager: Out line is not available.", e, Level.EXCEPTION);
             return null;
         }
     }
@@ -85,7 +84,7 @@ public class JavaxSoundManager implements SoundManager {
         musicTracks.clear();
         ambienceSounds.clear();
         ambienceIntervals.clear();
-        getLogger().log("JavaxSoundManager: Cleared all loaded sounds.", Level.DEBUG);
+        GameEngine.getInstance().getLogger().log("JavaxSoundManager: Cleared all loaded sounds.", Level.DEBUG);
     }
 
     /**
@@ -99,11 +98,11 @@ public class JavaxSoundManager implements SoundManager {
     public boolean addSoundEffect (String name, String path) {
         Clip c = findClip(path);
         if (c == null) {
-            getLogger().log("JavaxSoundManager: Was unable to add sound effect by the name of: " + name, Level.EXCEPTION);
+            GameEngine.getInstance().getLogger().log("JavaxSoundManager: Was unable to add sound effect by the name of: " + name, Level.EXCEPTION);
             return false;
         }
         soundEffects.put(name, c);
-        getLogger().log("JavaxSoundManager: Added sound effect by the name of: " + name, Level.DEBUG);
+        GameEngine.getInstance().getLogger().log("JavaxSoundManager: Added sound effect by the name of: " + name, Level.DEBUG);
         return true;
     }
 
@@ -115,7 +114,7 @@ public class JavaxSoundManager implements SoundManager {
     @Override
     public void removeSoundEffect (String name) {
         soundEffects.remove(name).close();
-        getLogger().log("JavaxSoundManager: Removed sound effect by the name of: " + name, Level.DEBUG);
+        GameEngine.getInstance().getLogger().log("JavaxSoundManager: Removed sound effect by the name of: " + name, Level.DEBUG);
     }
 
     /**
@@ -143,9 +142,9 @@ public class JavaxSoundManager implements SoundManager {
                 FloatControl control = (FloatControl) effect.getControl(FloatControl.Type.VOLUME);
                 assert control != null; // Checked if supported first.
                 control.setValue(vol);
-            } else getLogger().log("JavaxSoundManager: Attempted to modify volume of clip but action is not supported.", Level.WARNING);
-            getLogger().log("JavaxSoundManager: Played requested sound effect: " + name, Level.DEBUG);
-        } else getLogger().log("JavaxSoundManager: Effect was not found in the map of sound effects: " + name, Level.EXCEPTION);
+            } else GameEngine.getInstance().getLogger().log("JavaxSoundManager: Attempted to modify volume of clip but action is not supported.", Level.WARNING);
+            GameEngine.getInstance().getLogger().log("JavaxSoundManager: Played requested sound effect: " + name, Level.DEBUG);
+        } else GameEngine.getInstance().getLogger().log("JavaxSoundManager: Effect was not found in the map of sound effects: " + name, Level.EXCEPTION);
     }
 
     /**
@@ -159,11 +158,11 @@ public class JavaxSoundManager implements SoundManager {
     public boolean addMusicTrack (String name, String path) {
         Clip c = findClip(path);
         if (c == null) {
-            getLogger().log("JavaxSoundManager: Was unable to add music track by the name of: " + name, Level.EXCEPTION);
+            GameEngine.getInstance().getLogger().log("JavaxSoundManager: Was unable to add music track by the name of: " + name, Level.EXCEPTION);
             return false;
         }
         musicTracks.put(name, c);
-        getLogger().log("JavaxSoundManager: Added music track by the name of: " + name, Level.DEBUG);
+        GameEngine.getInstance().getLogger().log("JavaxSoundManager: Added music track by the name of: " + name, Level.DEBUG);
         return true;
     }
 
@@ -175,7 +174,7 @@ public class JavaxSoundManager implements SoundManager {
     @Override
     public void removeMusicTrack (String name) {
         musicTracks.remove(name).close();
-        getLogger().log("JavaxSoundManager: Removed music track by the name of: " + name, Level.DEBUG);
+        GameEngine.getInstance().getLogger().log("JavaxSoundManager: Removed music track by the name of: " + name, Level.DEBUG);
     }
 
     /**
@@ -208,9 +207,9 @@ public class JavaxSoundManager implements SoundManager {
                 FloatControl control = (FloatControl) track.getControl(FloatControl.Type.VOLUME);
                 assert control != null; // Checked if supported first.
                 control.setValue(vol);
-            } else getLogger().log("JavaxSoundManager: Attempted to modify volume of clip but action is not supported.", Level.WARNING);
-            getLogger().log("JavaxSoundManager: Played requested music track: " + name, Level.DEBUG);
-        } else getLogger().log("JavaxSoundManager: Track was not found in the map of music tracks: " + name, Level.EXCEPTION);
+            } else GameEngine.getInstance().getLogger().log("JavaxSoundManager: Attempted to modify volume of clip but action is not supported.", Level.WARNING);
+            GameEngine.getInstance().getLogger().log("JavaxSoundManager: Played requested music track: " + name, Level.DEBUG);
+        } else GameEngine.getInstance().getLogger().log("JavaxSoundManager: Track was not found in the map of music tracks: " + name, Level.EXCEPTION);
     }
 
     /**
@@ -221,7 +220,7 @@ public class JavaxSoundManager implements SoundManager {
         if (nowPlaying != null) {
             nowPlaying.stop();
             nowPlaying = null;
-            getLogger().log("JavaxSoundManager: Stopped currently playing music track.", Level.DEBUG);
+            GameEngine.getInstance().getLogger().log("JavaxSoundManager: Stopped currently playing music track.", Level.DEBUG);
         }
     }
 
@@ -239,12 +238,12 @@ public class JavaxSoundManager implements SoundManager {
     public boolean addAmbienceEffect (int interval, String name, String path) {
         Clip c = findClip(path);
         if (c == null) {
-            getLogger().log("JavaxSoundManager: Was unable to add ambience effect by the name of: " + name, Level.EXCEPTION);
+            GameEngine.getInstance().getLogger().log("JavaxSoundManager: Was unable to add ambience effect by the name of: " + name, Level.EXCEPTION);
             return false;
         }
         ambienceSounds.put(name, c);
         ambienceIntervals.put(name, interval);
-        getLogger().log("JavaxSoundManager: Added ambience effect by the name of: " + name, Level.DEBUG);
+        GameEngine.getInstance().getLogger().log("JavaxSoundManager: Added ambience effect by the name of: " + name, Level.DEBUG);
         return true;
     }
 
@@ -257,7 +256,7 @@ public class JavaxSoundManager implements SoundManager {
     public void removeAmbienceEffect (String name) {
         ambienceSounds.remove(name).close();
         ambienceIntervals.remove(name);
-        getLogger().log("JavaxSoundManager: Removed ambience effect by the name of: " + name, Level.DEBUG);
+        GameEngine.getInstance().getLogger().log("JavaxSoundManager: Removed ambience effect by the name of: " + name, Level.DEBUG);
     }
 
     /**
@@ -270,7 +269,7 @@ public class JavaxSoundManager implements SoundManager {
             double chance = 1.0 / ambienceIntervals.get(name);
             if (rand.nextDouble() <= chance) {
                 clip.start();
-                getLogger().log("JavaxSoundManager: Played ambience effect: " + name, Level.VERBOSE);
+                GameEngine.getInstance().getLogger().log("JavaxSoundManager: Played ambience effect: " + name, Level.VERBOSE);
             }
         });
     }
